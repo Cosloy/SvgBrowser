@@ -90,7 +90,8 @@
                                 Height="{Binding ImageSize, ElementName=thisWindow}"
                                 Background="Transparent"
                                 BorderThickness="0"
-                                Click="OnImageClick">
+                                Click="OnImageClick"
+                                ToolTip="{Binding Name}">
                             <DockPanel Margin="10"
                                        ToolTip="{Binding Name}">
                                 <TextBlock Margin="2,2,2,0"
@@ -99,7 +100,9 @@
                                            FontSize="16"
                                            Foreground="White"
                                            Text="{Binding Name}"
-                                           TextAlignment="Left" />
+                                           TextAlignment="Left"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis"/>
                                 <Border Background="{StaticResource IconBackgroundBrush}"
                                         CornerRadius="10">
                                     <svgc:SvgBitmap Width="Auto"
