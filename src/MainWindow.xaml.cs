@@ -23,7 +23,7 @@ namespace SvgBrowser
         {
             DataContext = this;
 
-            _currentFolder = LoadCurrentFolder() ?? Environment.CurrentDirectory; 
+            _currentFolder = LoadCurrentFolder() ?? Environment.CurrentDirectory;
 
             _svgFilesCollection = new ObservableCollection<FileInfo>();
             _collectionViewSource = new CollectionViewSource();
@@ -129,25 +129,25 @@ namespace SvgBrowser
             Clipboard.SetText(item.FullName);
             MessageBox.Show(
                 $"{item.FullName} has been copied to clipboard.",
-                "Filename Copied To Clipboard",
+                "Filename Copied to Clipboard",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
 
-        private void SaveCurrentFolder (string folder)
+
+        const string AppKey = @"Software\SvgBrowser";
+        const string CurrentFolderValue = "CurrentFolder";
+
+        private void SaveCurrentFolder(string folder)
         {
-            Registry.CurrentUser
-                .OpenSubKey("Software", true)
-                ?.CreateSubKey("SvgBrowser")
-                ?.SetValue("CurrentFolder", folder);
+            using RegistryKey? appKey = Registry.CurrentUser.CreateSubKey(AppKey);
+            appKey?.SetValue(CurrentFolderValue, folder);
         }
 
-        private string? LoadCurrentFolder ()
+        private string? LoadCurrentFolder()
         {
-            return Registry.CurrentUser
-                .OpenSubKey("Software")
-                ?.OpenSubKey("SvgBrowser")
-                ?.GetValue("CurrentFolder") as string;
+            using RegistryKey? appKey = Registry.CurrentUser.OpenSubKey(AppKey);
+            return appKey?.GetValue(CurrentFolderValue) as string;
         }
     }
 }
