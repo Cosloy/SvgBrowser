@@ -9,9 +9,13 @@
     <DebugType>embedded</DebugType>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <ApplicationIcon>appicon.ico</ApplicationIcon>
+    <Copyright>Copyright © 2024 Tom Vanderpoel</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\license.txt" Link="license.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="appicon.ico" />
   </ItemGroup>
 
