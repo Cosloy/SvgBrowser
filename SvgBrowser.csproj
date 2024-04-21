@@ -8,11 +8,11 @@
     <UseWPF>true</UseWPF>
     <DebugType>embedded</DebugType>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <ApplicationIcon>svgbrowser.ico</ApplicationIcon>
+    <ApplicationIcon>appicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="svgbrowser.ico" />
+    <Content Include="appicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
