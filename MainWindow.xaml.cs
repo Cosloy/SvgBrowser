@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace SvgBrowser
@@ -13,16 +14,28 @@ namespace SvgBrowser
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private readonly ObservableCollection<FileInfo> _svgFiles = new ObservableCollection<FileInfo>();
+        private readonly ObservableCollection<FileInfo> _svgFilesCollection = new ObservableCollection<FileInfo>();
+        private readonly CollectionViewSource _collectionViewSource;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public MainWindow()
         {
             DataContext = this;
+
+            _collectionViewSource = new CollectionViewSource();
+            _collectionViewSource.Source = _svgFilesCollection;
+            _collectionViewSource.SortDescriptions
+                .Add(new SortDescription(
+                    nameof(FileInfo.Name), 
+                    ListSortDirection.Ascending));
+
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
+
         }
+
+        public ICollectionView SvgFiles => _collectionViewSource.View;
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -30,14 +43,12 @@ namespace SvgBrowser
             LoadFolder(folder);
         }
 
-        public ObservableCollection<FileInfo> SvgFiles => _svgFiles;
-
         private void LoadFolder (DirectoryInfo folder)
         {
-            _svgFiles.Clear();
+            _svgFilesCollection.Clear();
             foreach (var file in folder.EnumerateFiles("*.svg"))
             {
-                _svgFiles.Add(file);
+                _svgFilesCollection.Add(file);
             }
         }
 
@@ -81,7 +92,8 @@ namespace SvgBrowser
             var folderDialog = new OpenFolderDialog
             {
                 Title = "Select Folder",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)
+                InitialDirectory = Environment.GetFolderPath(
+                    Environment.SpecialFolder.ProgramFilesX86)
             };
 
             if (folderDialog.ShowDialog() == true)
