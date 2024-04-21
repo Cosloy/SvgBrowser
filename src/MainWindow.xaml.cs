@@ -35,7 +35,7 @@ namespace SvgBrowser
             _collectionViewSource.Source = _svgFilesCollection;
             _collectionViewSource.SortDescriptions
                 .Add(new SortDescription(
-                    nameof(FileInfo.Name), 
+                    nameof(FileInfo.Name),
                     ListSortDirection.Ascending));
 
             InitializeComponent();
@@ -43,12 +43,12 @@ namespace SvgBrowser
         }
 
         private string _currentFolder;
-        public string CurrentFolder 
+        public string CurrentFolder
         {
             get => _currentFolder;
             private set
             {
-                if (_currentFolder == value) 
+                if (_currentFolder == value)
                     return;
                 _currentFolder = value;
                 Settings.Default.CurrentFolder = value;
@@ -61,14 +61,14 @@ namespace SvgBrowser
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            DirectoryInfo folder = new DirectoryInfo(CurrentFolder);
+            DirectoryInfo folder = new(CurrentFolder);
             LoadFolder(folder);
         }
 
-        private void LoadFolder (DirectoryInfo folder)
+        private void LoadFolder(DirectoryInfo folder)
         {
             _svgFilesCollection.Clear();
-            foreach (var file in folder.EnumerateFiles("*.svg"))
+            foreach (FileInfo file in folder.EnumerateFiles("*.svg"))
             {
                 _svgFilesCollection.Add(file);
             }
@@ -77,8 +77,8 @@ namespace SvgBrowser
         public Color IconBackground
         {
             get => Color.FromRgb(
-                (byte)_backgroundBrightness, 
-                (byte)_backgroundBrightness, 
+                (byte)_backgroundBrightness,
+                (byte)_backgroundBrightness,
                 (byte)_backgroundBrightness);
         }
 
@@ -111,7 +111,7 @@ namespace SvgBrowser
 
         private void OnBrowseClick(object sender, RoutedEventArgs e)
         {
-            var folderDialog = new OpenFolderDialog
+            OpenFolderDialog folderDialog = new()
             {
                 Title = "Select Folder",
                 InitialDirectory = Environment.GetFolderPath(
@@ -120,7 +120,7 @@ namespace SvgBrowser
 
             if (folderDialog.ShowDialog() == true)
             {
-                var folderName = folderDialog.FolderName;
+                string folderName = folderDialog.FolderName;
                 CurrentFolder = folderName;
                 DirectoryInfo folderInfo = new(folderName);
                 LoadFolder(folderInfo);
@@ -132,7 +132,7 @@ namespace SvgBrowser
             FileInfo item = (FileInfo)((Button)sender).DataContext;
             Clipboard.SetText(item.FullName);
             MessageBox.Show(
-                $"{item.FullName} has been copied to clipboard.", 
+                $"{item.FullName} has been copied to clipboard.",
                 "Filename Copied To Clipboard",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
