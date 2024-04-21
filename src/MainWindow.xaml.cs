@@ -26,8 +26,10 @@ namespace SvgBrowser
             _currentFolder = LoadCurrentFolder() ?? Environment.CurrentDirectory;
 
             _svgFilesCollection = new ObservableCollection<FileInfo>();
-            _collectionViewSource = new CollectionViewSource();
-            _collectionViewSource.Source = _svgFilesCollection;
+            _collectionViewSource = new CollectionViewSource
+            {
+                Source = _svgFilesCollection
+            };
             _collectionViewSource.SortDescriptions
                 .Add(new SortDescription(
                     nameof(FileInfo.Name),
@@ -138,13 +140,13 @@ namespace SvgBrowser
         const string AppKey = @"Software\SvgBrowser";
         const string CurrentFolderValue = "CurrentFolder";
 
-        private void SaveCurrentFolder(string folder)
+        private static void SaveCurrentFolder(string folder)
         {
             using RegistryKey? appKey = Registry.CurrentUser.CreateSubKey(AppKey);
             appKey?.SetValue(CurrentFolderValue, folder);
         }
 
-        private string? LoadCurrentFolder()
+        private static string? LoadCurrentFolder()
         {
             using RegistryKey? appKey = Registry.CurrentUser.OpenSubKey(AppKey);
             return appKey?.GetValue(CurrentFolderValue) as string;
