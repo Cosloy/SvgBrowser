@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using SvgBrowser.Properties;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -14,7 +15,7 @@ namespace SvgBrowser
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private readonly ObservableCollection<FileInfo> _svgFilesCollection = new ObservableCollection<FileInfo>();
+        private readonly ObservableCollection<FileInfo> _svgFilesCollection;
         private readonly CollectionViewSource _collectionViewSource;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -23,6 +24,13 @@ namespace SvgBrowser
         {
             DataContext = this;
 
+            _currentFolder = Settings.Default.CurrentFolder;
+            if (string.IsNullOrEmpty(_currentFolder))
+            {
+                _currentFolder = Environment.CurrentDirectory;
+            }
+
+            _svgFilesCollection = new ObservableCollection<FileInfo>();
             _collectionViewSource = new CollectionViewSource();
             _collectionViewSource.Source = _svgFilesCollection;
             _collectionViewSource.SortDescriptions
@@ -32,14 +40,28 @@ namespace SvgBrowser
 
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
+        }
 
+        private string _currentFolder;
+        public string CurrentFolder 
+        {
+            get => _currentFolder;
+            private set
+            {
+                if (_currentFolder == value) 
+                    return;
+                _currentFolder = value;
+                Settings.Default.CurrentFolder = value;
+                Settings.Default.Save();
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentFolder)));
+            }
         }
 
         public ICollectionView SvgFiles => _collectionViewSource.View;
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            DirectoryInfo folder = new DirectoryInfo(@"c:\users\tcvan\desktop\icons");
+            DirectoryInfo folder = new DirectoryInfo(CurrentFolder);
             LoadFolder(folder);
         }
 
@@ -99,6 +121,7 @@ namespace SvgBrowser
             if (folderDialog.ShowDialog() == true)
             {
                 var folderName = folderDialog.FolderName;
+                CurrentFolder = folderName;
                 DirectoryInfo folderInfo = new(folderName);
                 LoadFolder(folderInfo);
             }

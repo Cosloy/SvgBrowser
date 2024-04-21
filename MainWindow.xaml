@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         x:Name="thisWindow"
-        Title="SVG Browser"
+        Title="{Binding Path=CurrentFolder, StringFormat=SVG Browser - {0}}"
         Width="800"
         Height="600"
         Background="#505050"
