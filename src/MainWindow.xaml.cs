@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using SvgBrowser.Properties;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -24,11 +23,7 @@ namespace SvgBrowser
         {
             DataContext = this;
 
-            _currentFolder = Settings.Default.CurrentFolder;
-            if (string.IsNullOrEmpty(_currentFolder))
-            {
-                _currentFolder = Environment.CurrentDirectory;
-            }
+            _currentFolder = LoadCurrentFolder() ?? Environment.CurrentDirectory; 
 
             _svgFilesCollection = new ObservableCollection<FileInfo>();
             _collectionViewSource = new CollectionViewSource();
@@ -51,8 +46,9 @@ namespace SvgBrowser
                 if (_currentFolder == value)
                     return;
                 _currentFolder = value;
-                Settings.Default.CurrentFolder = value;
-                Settings.Default.Save();
+                //Settings.Default.CurrentFolder = value;
+                //Settings.Default.Save();
+                SaveCurrentFolder(_currentFolder);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentFolder)));
             }
         }
@@ -136,6 +132,22 @@ namespace SvgBrowser
                 "Filename Copied To Clipboard",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
+        }
+
+        private void SaveCurrentFolder (string folder)
+        {
+            Registry.CurrentUser
+                .OpenSubKey("Software", true)
+                ?.CreateSubKey("SvgBrowser")
+                ?.SetValue("CurrentFolder", folder);
+        }
+
+        private string? LoadCurrentFolder ()
+        {
+            return Registry.CurrentUser
+                .OpenSubKey("Software")
+                ?.OpenSubKey("SvgBrowser")
+                ?.GetValue("CurrentFolder") as string;
         }
     }
 }
